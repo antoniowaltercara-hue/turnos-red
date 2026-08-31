@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TurnosRed - Eventos en tiempo real</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background: #f4f7fb;
+        color: #17324d;
+      }
+      main {
+        max-width: 900px;
+        margin: 40px auto;
+        background: white;
+        padding: 32px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px #16324d1c;
+      }
+      h1 {
+        margin-top: 0;
+        color: #1f5f99;
+      }
+      .estado {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 16px;
+        background: #e7f6ec;
+        color: #176b35;
+        font-weight: bold;
+      }
+      #eventos {
+        margin-top: 20px;
+        min-height: 220px;
+        padding: 16px;
+        background: #101820;
+        color: #d7f9df;
+        border-radius: 8px;
+        white-space: pre-wrap;
+        font-family: Consolas, monospace;
+      }
+      small {
+        color: #5e7184;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>TurnosRed</h1>
+      <p><span class="estado" id="estado">Conectando...</span></p>
+      <p>Esta pantalla muestra los cambios recibidos por Socket.IO sin recargar la página.</p>
+      <small>Dejá esta ventana abierta y ejecutá POST, PUT o DELETE desde Postman.</small>
+      <div id="eventos">Esperando eventos...</div>
+    </main>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const estado = document.querySelector('#estado');
+      const eventos = document.querySelector('#eventos');
+
+      socket.on('connect', () => {
+        estado.textContent = `Conectado: ${socket.id}`;
+        eventos.textContent = '';
+      });
+
+      ['turno:nuevo', 'turno:actualizado', 'turno:eliminado'].forEach((nombre) => {
+        socket.on(nombre, (datos) => {
+          const hora = new Date().toLocaleTimeString();
+          eventos.textContent += `[${hora}] ${nombre}\n${JSON.stringify(datos, null, 2)}\n\n`;
+        });
+      });
+    </script>
+  </body>
+</html>
