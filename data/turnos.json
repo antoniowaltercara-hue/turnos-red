@@ -1,0 +1,39 @@
+[
+  {
+    "id": "102",
+    "paciente": "   Carlos Ruiz ",
+    "documento": 31654210,
+    "especialidad": "PEDIATRÍA",
+    "fecha": "14/08/2026",
+    "hora": "10.00",
+    "confirmado": "si"
+  },
+  {
+    "id": 103,
+    "paciente": "María López",
+    "documento": "28444555",
+    "especialidad": "odontología",
+    "fecha": "2026-08-15",
+    "hora": "11:30",
+    "confirmado": true,
+    "observaciones": "Control anual"
+  },
+  {
+    "id": "104",
+    "paciente": "  Ana Torres  ",
+    "documento": 40111222,
+    "especialidad": "NUTRICIÓN",
+    "fecha": "16-08-2026",
+    "hora": "09.15",
+    "confirmado": "no"
+  },
+  {
+    "id": "dato-invalido",
+    "paciente": "Registro que se descarta",
+    "documento": 0,
+    "especialidad": "CLÍNICA MÉDICA",
+    "fecha": "17/08/2026",
+    "hora": "08.00",
+    "confirmado": "si"
+  }
+]
