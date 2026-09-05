@@ -1,0 +1,22 @@
+[
+  {
+    "medicoId": 1,
+    "nombre": "Laura",
+    "apellido": "Gómez",
+    "matricula": "MN-12540",
+    "especialidadId": 1,
+    "email": "laura.gomez@turnosred.com",
+    "telefono": "3515550101",
+    "activo": true
+  },
+  {
+    "medicoId": 2,
+    "nombre": "Martín",
+    "apellido": "Pérez",
+    "matricula": "MN-18120",
+    "especialidadId": 2,
+    "email": "martin.perez@turnosred.com",
+    "telefono": "3515550102",
+    "activo": true
+  }
+]

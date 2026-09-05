@@ -1,0 +1,37 @@
+{
+  "info": {
+    "name": "TurnosMed API",
+    "description": "Colección de pruebas de la Actividad 2: especialidades y profesionales.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [{ "key": "baseUrl", "value": "http://localhost:3000" }],
+  "item": [
+    {
+      "name": "Especialidades",
+      "item": [
+        { "name": "Listar especialidades - 200", "request": { "method": "GET", "url": "{{baseUrl}}/especialidades" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 200', () => pm.response.to.have.status(200));"] } }] },
+        { "name": "Buscar especialidad por ID - 200", "request": { "method": "GET", "url": "{{baseUrl}}/especialidades/1" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 200', () => pm.response.to.have.status(200));"] } }] },
+        { "name": "Crear especialidad - 201", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Cardiología\",\n  \"descripcion\": \"Atención y control del corazón\"\n}" }, "url": "{{baseUrl}}/especialidades" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 201', () => pm.response.to.have.status(201));"] } }] },
+        { "name": "Eliminar especialidad (baja lógica) - 200", "request": { "method": "DELETE", "url": "{{baseUrl}}/especialidades/4" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 200', () => pm.response.to.have.status(200));", "pm.test('Queda inactiva', () => pm.expect(pm.response.json().datos.activa).to.eql(false));"] } }] },
+        { "name": "Especialidad inexistente - 404", "request": { "method": "GET", "url": "{{baseUrl}}/especialidades/999" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 404 controlado', () => pm.response.to.have.status(404));"] } }] },
+        { "name": "Especialidad con datos inválidos - 400", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"\",\n  \"descripcion\": \"\"\n}" }, "url": "{{baseUrl}}/especialidades" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 400 controlado', () => pm.response.to.have.status(400));"] } }] }
+      ]
+    },
+    {
+      "name": "Profesionales",
+      "item": [
+        { "name": "Listar profesionales - 200", "request": { "method": "GET", "url": "{{baseUrl}}/profesionales" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 200', () => pm.response.to.have.status(200));"] } }] },
+        { "name": "Buscar profesional por ID - 200", "request": { "method": "GET", "url": "{{baseUrl}}/profesionales/1" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 200', () => pm.response.to.have.status(200));"] } }] },
+        { "name": "Crear profesional - 201", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Ana\",\n  \"apellido\": \"López\",\n  \"matricula\": \"MP-20260\",\n  \"especialidadId\": 3,\n  \"email\": \"ana.lopez@turnosred.com\",\n  \"telefono\": \"3515550199\"\n}" }, "url": "{{baseUrl}}/profesionales" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 201', () => pm.response.to.have.status(201));"] } }] },
+        { "name": "Actualizar profesional - 200", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Ana María\",\n  \"apellido\": \"López\",\n  \"matricula\": \"MP-20260\",\n  \"especialidadId\": 3,\n  \"email\": \"ana.lopez@turnosred.com\",\n  \"telefono\": \"3515550199\"\n}" }, "url": "{{baseUrl}}/profesionales/3" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 200', () => pm.response.to.have.status(200));"] } }] },
+        { "name": "Eliminar profesional (baja lógica) - 200", "request": { "method": "DELETE", "url": "{{baseUrl}}/profesionales/3" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 200', () => pm.response.to.have.status(200));", "pm.test('Queda inactivo', () => pm.expect(pm.response.json().datos.activo).to.eql(false));"] } }] },
+        { "name": "Profesional inexistente - 404", "request": { "method": "GET", "url": "{{baseUrl}}/profesionales/999" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 404 controlado', () => pm.response.to.have.status(404));"] } }] },
+        { "name": "Profesional con especialidad inexistente - 404", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Prueba\",\n  \"matricula\": \"MP-99999\",\n  \"especialidadId\": 999,\n  \"email\": \"juan@turnosred.com\",\n  \"telefono\": \"3515550999\"\n}" }, "url": "{{baseUrl}}/profesionales" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 404 controlado', () => pm.response.to.have.status(404));"] } }] }
+      ]
+    },
+    {
+      "name": "Errores controlados",
+      "item": [{ "name": "Ruta no encontrada - 404", "request": { "method": "GET", "url": "{{baseUrl}}/ruta-inexistente" }, "event": [{ "listen": "test", "script": { "exec": ["pm.test('Estado 404', () => pm.response.to.have.status(404));"] } }] }]
+    }
+  ]
+}

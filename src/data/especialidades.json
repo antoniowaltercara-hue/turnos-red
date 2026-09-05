@@ -1,0 +1,20 @@
+[
+  {
+    "especialidadId": 1,
+    "nombre": "Clínica médica",
+    "descripcion": "Atención general para personas adultas.",
+    "activa": true
+  },
+  {
+    "especialidadId": 2,
+    "nombre": "Pediatría",
+    "descripcion": "Atención médica para niños y adolescentes.",
+    "activa": true
+  },
+  {
+    "especialidadId": 3,
+    "nombre": "Nutrición",
+    "descripcion": "Seguimiento y orientación alimentaria.",
+    "activa": true
+  }
+]

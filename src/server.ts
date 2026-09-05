@@ -3,10 +3,16 @@ import { Server as SocketServer } from 'socket.io';
 import { crearApp } from './app.js';
 import { eventBus, EVENTOS_INTERNOS } from './events/eventBus.js';
 import type { Turno } from './models/turno.js';
+import type { EspecialidadService } from './services/especialidadService.js';
+import type { ProfesionalService } from './services/profesionalService.js';
 import type { TurnoService } from './services/turnoService.js';
 
-export function crearServidor(service: TurnoService): { httpServer: HttpServer; io: SocketServer } {
-  const httpServer = createServer(crearApp(service));
+export function crearServidor(
+  service: TurnoService,
+  especialidades?: EspecialidadService,
+  profesionales?: ProfesionalService,
+): { httpServer: HttpServer; io: SocketServer } {
+  const httpServer = createServer(crearApp(service, especialidades, profesionales));
   const io = new SocketServer(httpServer, { cors: { origin: '*' } });
 
   io.on('connection', (socket) => {
