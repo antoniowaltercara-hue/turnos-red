@@ -1,4 +1,4 @@
-# TurnosRed - Actividad 3
+# TurnosRed - Actividades 1, 2 y 3
 
 Continuación de las actividades 1 y 2 de Integraciones Web. Controladores async, validaciones, try/catch y respuestas HTTP explícitas.
 
@@ -81,6 +81,6 @@ La ejecución HTTP usa fetch: no ejecuta los scripts dentro del motor de Postman
 
 ## Entrega y apoyo
 
-Esta versión de la Actividad 3 se publica en la rama codex/actividad-3. También se preparó un ZIP como alternativa de entrega. Hasta integrar la solicitud de cambios, main conserva la versión anterior.
+Este repositorio reúne las actividades 1, 2 y 3. También se preparó un ZIP como alternativa de entrega de la Actividad 3.
 El informe tiene espacios señalados para incorporar capturas reales antes de la entrega definitiva.
-Se utilizó ChatGPT mediante Codex como apoyo para refactorizar el código, revisar validaciones, preparar pruebas y documentación.
+Se utilizó ChatGPT como apoyo para refactorizar el código, revisar validaciones, preparar pruebas y documentación.
