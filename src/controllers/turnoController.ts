@@ -1,84 +1,152 @@
-import type { NextFunction, Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import type { TurnoCrudo } from '../models/turno.js';
 import type { TurnoService } from '../services/turnoService.js';
-
-function idValido(valor: unknown): number | null {
-  if (Array.isArray(valor)) return null;
-  const id = Number(valor);
-  return Number.isInteger(id) && id > 0 ? id : null;
-}
+import { ApiError } from '../errors/ApiError.js';
+import { idPositivo } from '../utils/validaciones.js';
 
 export class TurnoController {
   constructor(private readonly service: TurnoService) {}
 
-  listar = (_req: Request, res: Response): void => {
-    res.status(200).json(this.service.obtenerTodos());
-  };
-
-  obtener = (req: Request, res: Response): void => {
-    const id = idValido(req.params.id ?? '');
-    if (!id) {
-      res.status(400).json({ mensaje: 'El ID debe ser un número entero positivo.' });
-      return;
-    }
-    const turno = this.service.obtenerPorId(id);
-    if (!turno) {
-      res.status(404).json({ mensaje: 'Turno no encontrado.' });
-      return;
-    }
-    res.status(200).json(turno);
-  };
-
-  crear = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  listar = async (_req: Request, res: Response): Promise<Response> => {
+    let status = 500;
     try {
-      const turno = await this.service.crear(req.body as TurnoCrudo);
-      res.status(201).json(turno);
+      const datos = await this.service.obtenerTodos();
+      status = 200;
+      return res.status(status).json(datos);
     } catch (error) {
-      if (error instanceof Error && error.message.includes('válid')) {
-        res.status(400).json({ mensaje: error.message });
-        return;
-      }
-      next(error);
+      if (error instanceof ApiError) status = error.status;
+      else if (
+        error instanceof Error &&
+        (error.message.includes('válid') || error.message === 'Ya existe un turno con ese ID.')
+      )
+        status = 400;
+      return res
+        .status(status)
+        .json({
+          mensaje:
+            status < 500 && error instanceof Error
+              ? error.message
+              : 'Ocurrió un error interno en el servidor.',
+        });
     }
   };
 
-  actualizar = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const id = idValido(req.params.id ?? '');
-    if (!id) {
-      res.status(400).json({ mensaje: 'El ID debe ser un número entero positivo.' });
-      return;
-    }
+  obtener = async (req: Request, res: Response): Promise<Response> => {
+    let status = 500;
     try {
-      const turno = await this.service.actualizar(id, req.body as TurnoCrudo);
-      if (!turno) {
-        res.status(404).json({ mensaje: 'Turno no encontrado.' });
-        return;
+      const id = idPositivo(req.params.id);
+      const datos = await this.service.obtenerPorId(id);
+      if (!datos) {
+        status = 404;
+        throw new Error('Turno no encontrado.');
       }
-      res.status(200).json(turno);
+      status = 200;
+      return res.status(status).json(datos);
     } catch (error) {
-      if (error instanceof Error && error.message.includes('válid')) {
-        res.status(400).json({ mensaje: error.message });
-        return;
-      }
-      next(error);
+      if (error instanceof ApiError) status = error.status;
+      else if (
+        error instanceof Error &&
+        (error.message.includes('válid') || error.message === 'Ya existe un turno con ese ID.')
+      )
+        status = 400;
+      return res
+        .status(status)
+        .json({
+          mensaje:
+            status < 500 && error instanceof Error
+              ? error.message
+              : 'Ocurrió un error interno en el servidor.',
+        });
     }
   };
 
-  eliminar = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const id = idValido(req.params.id ?? '');
-    if (!id) {
-      res.status(400).json({ mensaje: 'El ID debe ser un número entero positivo.' });
-      return;
-    }
+  crear = async (req: Request, res: Response): Promise<Response> => {
+    let status = 500;
     try {
-      const turno = await this.service.eliminar(id);
-      if (!turno) {
-        res.status(404).json({ mensaje: 'Turno no encontrado.' });
-        return;
+      if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body)) {
+        status = 400;
+        throw new Error('Los datos del turno no son válidos.');
       }
-      res.status(200).json({ mensaje: 'Turno eliminado correctamente.', turno });
+      const datos = await this.service.crear(req.body as TurnoCrudo);
+      status = 201;
+      return res.status(status).json(datos);
     } catch (error) {
-      next(error);
+      if (error instanceof ApiError) status = error.status;
+      else if (
+        error instanceof Error &&
+        (error.message.includes('válid') || error.message === 'Ya existe un turno con ese ID.')
+      )
+        status = 400;
+      return res
+        .status(status)
+        .json({
+          mensaje:
+            status < 500 && error instanceof Error
+              ? error.message
+              : 'Ocurrió un error interno en el servidor.',
+        });
+    }
+  };
+
+  actualizar = async (req: Request, res: Response): Promise<Response> => {
+    let status = 500;
+    try {
+      const id = idPositivo(req.params.id);
+      if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body)) {
+        status = 400;
+        throw new Error('Los datos del turno no son válidos.');
+      }
+      const datos = await this.service.actualizar(id, req.body as TurnoCrudo);
+      if (!datos) {
+        status = 404;
+        throw new Error('Turno no encontrado.');
+      }
+      status = 200;
+      return res.status(status).json(datos);
+    } catch (error) {
+      if (error instanceof ApiError) status = error.status;
+      else if (
+        error instanceof Error &&
+        (error.message.includes('válid') || error.message === 'Ya existe un turno con ese ID.')
+      )
+        status = 400;
+      return res
+        .status(status)
+        .json({
+          mensaje:
+            status < 500 && error instanceof Error
+              ? error.message
+              : 'Ocurrió un error interno en el servidor.',
+        });
+    }
+  };
+
+  eliminar = async (req: Request, res: Response): Promise<Response> => {
+    let status = 500;
+    try {
+      const id = idPositivo(req.params.id);
+      const datos = await this.service.eliminar(id);
+      if (!datos) {
+        status = 404;
+        throw new Error('Turno no encontrado.');
+      }
+      status = 200;
+      return res.status(status).json({ mensaje: 'Turno eliminado correctamente.', turno: datos });
+    } catch (error) {
+      if (error instanceof ApiError) status = error.status;
+      else if (
+        error instanceof Error &&
+        (error.message.includes('válid') || error.message === 'Ya existe un turno con ese ID.')
+      )
+        status = 400;
+      return res
+        .status(status)
+        .json({
+          mensaje:
+            status < 500 && error instanceof Error
+              ? error.message
+              : 'Ocurrió un error interno en el servidor.',
+        });
     }
   };
 }

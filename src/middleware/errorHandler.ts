@@ -6,22 +6,19 @@ export function errorHandler(
   _req: Request,
   res: Response,
   _next: NextFunction,
-): void {
+): Response {
   if (error instanceof ApiError) {
-    res.status(error.status).json({
+    return res.status(error.status).json({
       exito: false,
       mensaje: error.message,
       ...(error.detalles ? { errores: error.detalles } : {}),
     });
-    return;
+  }
+  if (error instanceof SyntaxError && 'status' in error && error.status === 400) {
+    return res.status(400).json({ exito: false, mensaje: 'El cuerpo debe contener JSON válido.' });
   }
   console.error(error);
-  res.status(500).json({ exito: false, mensaje: 'Ocurrió un error interno en el servidor.' });
-}
-
-export function rutaNoEncontrada(req: Request, res: Response): void {
-  res.status(404).json({
-    exito: false,
-    mensaje: `No existe una ruta para ${req.method} ${req.originalUrl}.`,
-  });
+  return res
+    .status(500)
+    .json({ exito: false, mensaje: 'Ocurrió un error interno en el servidor.' });
 }
