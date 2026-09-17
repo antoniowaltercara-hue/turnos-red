@@ -13,7 +13,12 @@ function texto(valor: unknown, campo: string, minimo = 2): string {
 
 export function idPositivo(valor: unknown, nombre = 'id'): number {
   const id = Number(valor);
-  if (!Number.isInteger(id) || id <= 0) {
+  if (
+    (typeof valor !== 'string' && typeof valor !== 'number') ||
+    !/^\d+$/.test(String(valor)) ||
+    !Number.isSafeInteger(id) ||
+    id <= 0
+  ) {
     throw new ApiError(400, 'El identificador no es válido.', [
       `${nombre} debe ser un número entero positivo.`,
     ]);

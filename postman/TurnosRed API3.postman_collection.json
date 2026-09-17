@@ -1,0 +1,542 @@
+{
+  "info": {
+    "name": "TurnosRed API 3",
+    "description": "Ejecutar en orden sobre un servidor recién iniciado. Datos ficticios. Reiniciar antes de repetir la colección porque la matrícula se conserva tras la baja lógica. Puerto predeterminado 3000.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "especialidadNueva",
+      "value": ""
+    },
+    {
+      "key": "profesionalNuevo",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Bienvenida",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200', () => pm.response.to.have.status(200));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Listar especialidades",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/especialidades"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200', () => pm.response.to.have.status(200));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Buscar especialidad",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/especialidades/1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200', () => pm.response.to.have.status(200));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Crear especialidad",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/especialidades",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Cardiología API3\",\n  \"descripcion\": \"Atención y control del corazón\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 201', () => pm.response.to.have.status(201));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(true));",
+              "pm.collectionVariables.set('especialidadNueva', pm.response.json().datos.especialidadId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Baja lógica de especialidad",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/especialidades/{{especialidadNueva}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200', () => pm.response.to.have.status(200));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(true));",
+              "pm.test('Especialidad inactiva', () => pm.expect(pm.response.json().datos.activa).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Listar profesionales",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/profesionales"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200', () => pm.response.to.have.status(200));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Buscar profesional",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/profesionales/1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200', () => pm.response.to.have.status(200));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Crear profesional",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/profesionales",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Ana\",\n  \"apellido\": \"López\",\n  \"matricula\": \"MP-API3-001\",\n  \"especialidadId\": 1,\n  \"email\": \"ana@example.com\",\n  \"telefono\": \"3515550199\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 201', () => pm.response.to.have.status(201));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(true));",
+              "pm.collectionVariables.set('profesionalNuevo', pm.response.json().datos.medicoId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Actualizar profesional",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/profesionales/{{profesionalNuevo}}",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Ana María\",\n  \"apellido\": \"López\",\n  \"matricula\": \"MP-API3-001\",\n  \"especialidadId\": 1,\n  \"email\": \"ana@example.com\",\n  \"telefono\": \"3515550199\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200', () => pm.response.to.have.status(200));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Baja lógica de profesional",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/profesionales/{{profesionalNuevo}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200', () => pm.response.to.have.status(200));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(true));",
+              "pm.test('Profesional inactivo', () => pm.expect(pm.response.json().datos.activo).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 Ruta inexistente",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/ruta-inexistente"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 404', () => pm.response.to.have.status(404));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12 Cuerpo incompleto",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/profesionales",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 400', () => pm.response.to.have.status(400));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "13 ID con tipo incorrecto",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/especialidades/abc"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 400', () => pm.response.to.have.status(400));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "14 Recurso inexistente",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/profesionales/999999"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 404', () => pm.response.to.have.status(404));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "15 Tipo de nombre incorrecto",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/especialidades",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": 123,\n  \"descripcion\": \"Descripción de prueba\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 400', () => pm.response.to.have.status(400));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "16 Cuerpo ausente",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/especialidades"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 400', () => pm.response.to.have.status(400));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "17 Especialidad inexistente",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/profesionales",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Ana\",\n  \"apellido\": \"López\",\n  \"matricula\": \"MP-API3-002\",\n  \"especialidadId\": 999999,\n  \"email\": \"ana@example.com\",\n  \"telefono\": \"3515550199\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 404', () => pm.response.to.have.status(404));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "18 Especialidad inactiva",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/profesionales",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Ana\",\n  \"apellido\": \"López\",\n  \"matricula\": \"MP-API3-003\",\n  \"especialidadId\": \"{{especialidadNueva}}\",\n  \"email\": \"ana@example.com\",\n  \"telefono\": \"3515550199\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 400', () => pm.response.to.have.status(400));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "19 JSON como arreglo",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/especialidades",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[]",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 400', () => pm.response.to.have.status(400));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "20 Datos inválidos al actualizar",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/profesionales/1",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Ana\",\n  \"apellido\": \"López\",\n  \"matricula\": \"MP-API3-001\",\n  \"especialidadId\": 1,\n  \"email\": \"sin-arroba\",\n  \"telefono\": \"3515550199\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 400', () => pm.response.to.have.status(400));",
+              "pm.test('Respuesta JSON coherente', () => pm.expect(pm.response.json().exito).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

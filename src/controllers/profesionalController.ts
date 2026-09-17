@@ -1,60 +1,90 @@
-import type { NextFunction, Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import type { ProfesionalService } from '../services/profesionalService.js';
-import { idPositivo } from '../utils/validaciones.js';
+import { idPositivo, validarProfesional } from '../utils/validaciones.js';
+
+import { ApiError } from '../errors/ApiError.js';
+import { respuestaError } from '../utils/respuestaError.js';
 
 export class ProfesionalController {
   constructor(private readonly service: ProfesionalService) {}
 
-  listar = (_req: Request, res: Response, next: NextFunction): void => {
+  listar = async (_req: Request, res: Response): Promise<Response> => {
+    let status = 500;
     try {
-      res.status(200).json({ exito: true, datos: this.service.obtenerTodos() });
+      const datos = await this.service.obtenerTodos();
+      status = 200;
+      return res.status(status).json({ exito: true, datos });
     } catch (error) {
-      next(error);
+      status = error instanceof ApiError ? error.status : status === 400 ? 400 : 500;
+      return res.status(status).json(respuestaError(error, status));
     }
   };
 
-  obtener = (req: Request, res: Response, next: NextFunction): void => {
+  obtener = async (req: Request, res: Response): Promise<Response> => {
+    let status = 500;
     try {
-      const datos = this.service.obtenerPorId(idPositivo(req.params.id, 'medicoId'));
-      res.status(200).json({ exito: true, datos });
+      const datos = await this.service.obtenerPorId(idPositivo(req.params.id, 'medicoId'));
+      status = 200;
+      return res.status(status).json({ exito: true, datos });
     } catch (error) {
-      next(error);
+      status = error instanceof ApiError ? error.status : status === 400 ? 400 : 500;
+      return res.status(status).json(respuestaError(error, status));
     }
   };
 
-  crear = (req: Request, res: Response, next: NextFunction): void => {
+  crear = async (req: Request, res: Response): Promise<Response> => {
+    let status = 500;
     try {
-      const datos = this.service.crear(req.body);
+      if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body)) {
+        status = 400;
+        throw new Error('El cuerpo debe ser un objeto JSON con los campos obligatorios.');
+      }
+      const entrada = validarProfesional(req.body);
+      const datos = await this.service.crear(entrada);
       console.clear();
       console.log('Profesionales después del alta:');
       console.table(this.service.obtenerTodos());
-      res.status(201).json({ exito: true, mensaje: 'Profesional creado.', datos });
+      status = 201;
+      return res.status(status).json({ exito: true, mensaje: 'Profesional creado.', datos });
     } catch (error) {
-      next(error);
+      status = error instanceof ApiError ? error.status : status === 400 ? 400 : 500;
+      return res.status(status).json(respuestaError(error, status));
     }
   };
 
-  actualizar = (req: Request, res: Response, next: NextFunction): void => {
+  actualizar = async (req: Request, res: Response): Promise<Response> => {
+    let status = 500;
     try {
-      const datos = this.service.actualizar(idPositivo(req.params.id, 'medicoId'), req.body);
+      const id = idPositivo(req.params.id, 'medicoId');
+      if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body)) {
+        status = 400;
+        throw new Error('El cuerpo debe ser un objeto JSON con los campos obligatorios.');
+      }
+      const entrada = validarProfesional(req.body);
+      const datos = await this.service.actualizar(id, entrada);
       console.clear();
       console.log('Profesionales después de la actualización:');
       console.table(this.service.obtenerTodos());
-      res.status(200).json({ exito: true, mensaje: 'Profesional actualizado.', datos });
+      status = 200;
+      return res.status(status).json({ exito: true, mensaje: 'Profesional actualizado.', datos });
     } catch (error) {
-      next(error);
+      status = error instanceof ApiError ? error.status : status === 400 ? 400 : 500;
+      return res.status(status).json(respuestaError(error, status));
     }
   };
 
-  eliminar = (req: Request, res: Response, next: NextFunction): void => {
+  eliminar = async (req: Request, res: Response): Promise<Response> => {
+    let status = 500;
     try {
-      const datos = this.service.eliminar(idPositivo(req.params.id, 'medicoId'));
+      const datos = await this.service.eliminar(idPositivo(req.params.id, 'medicoId'));
       console.clear();
       console.log('Profesionales después de la baja lógica:');
       console.table(this.service.obtenerTodos());
-      res.status(200).json({ exito: true, mensaje: 'Profesional desactivado.', datos });
+      status = 200;
+      return res.status(status).json({ exito: true, mensaje: 'Profesional desactivado.', datos });
     } catch (error) {
-      next(error);
+      status = error instanceof ApiError ? error.status : status === 400 ? 400 : 500;
+      return res.status(status).json(respuestaError(error, status));
     }
   };
 }
